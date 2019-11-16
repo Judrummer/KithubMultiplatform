@@ -57,5 +57,5 @@ playground.xcworkspace
 #Because ugh
 .DS_Store
 
-# ignore gen app_core file in iosApp
-iosApp/app*
+# ignore gen core file in iosApp
+iosApp/core*
