@@ -26,6 +26,32 @@ class RepoDetailViewModel(
     private val githubApi: GithubApi
 ) : KViewModel<RepoDetailViewState>(RepoDetailViewState()) {
     fun refresh(repoName: String) {
-        //TODO: Implement RepoDetailViewModel.refresh
+        launch {
+            try {
+                setState { copy(loading = true) }
+                val contributors = githubApi.getContributors(userPreference.username, repoName)
+                val repoDetail = githubApi.getUserRepoDetail(userPreference.username, repoName)
+
+                setState {
+                    copy(loading = false,
+                        name = repoDetail.name.orEmpty(),
+                        descriptionText = repoDetail.description.orEmpty(),
+                        language = repoDetail.language.orEmpty(),
+                        starCount = repoDetail.stargazersCount ?: 0,
+                        sshUrl = repoDetail.sshUrl.orEmpty(),
+                        contributors = contributors.map {
+                            ContributorItem(
+                                name = it.login.orEmpty(),
+                                avatarUrl = it.avatarUrl.orEmpty(),
+                                contributions = it.contributions ?: 0
+                            )
+                        })
+                }
+
+            } catch (e: Throwable) {
+                setState { copy(loading = false) }
+                setError(e)
+            }
+        }
     }
 }

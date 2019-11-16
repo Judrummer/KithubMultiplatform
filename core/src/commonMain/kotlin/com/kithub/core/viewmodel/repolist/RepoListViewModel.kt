@@ -25,10 +25,36 @@ class RepoListViewModel(
     private val githubApi: GithubApi
 ) : KViewModel<RepoListViewState>(RepoListViewState()) {
     fun refresh() {
-        //TODO: Implement RepoListViewModel.refresh
+        launch {
+            try {
+                setState { copy(loading = true) }
+
+                val userEntity = githubApi.getUser(username = userPreference.username)
+                val repoEntities = githubApi.getUserRepos(username = userPreference.username)
+
+                setState {
+                    copy(
+                        loading = false,
+                        username = userEntity.login ?: "",
+                        displayName = userEntity.name.orEmpty(),
+                        avatarUrl = userEntity.avatarUrl.orEmpty(),
+                        repos = repoEntities.map {
+                            RepoItem(
+                                name = it.name.orEmpty(),
+                                descriptionText = it.description.orEmpty(),
+                                starCount = it.stargazersCount ?: 0
+                            )
+                        }
+                    )
+                }
+            } catch (e: Throwable) {
+                setState { copy(loading = false) }
+                setError(e)
+            }
+        }
     }
 
     fun logout() {
-        //TODO: Implement RepoListViewModel.logout
+        userPreference.username = ""
     }
 }

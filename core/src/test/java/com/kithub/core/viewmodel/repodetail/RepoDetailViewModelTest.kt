@@ -32,6 +32,49 @@ class RepoDetailViewModelTest {
 
     @Test
     fun refresh() {
-        //TODO: Implement RepoListViewModelTest.refresh
+        val repoDetailEntity = RepoDetailEntity(
+            name = "ktor",
+            description = "http library",
+            language = "kotlin",
+            sshUrl = "ssh.url",
+            stargazersCount = 2000
+        )
+
+        val contributorEntities = listOf(
+            ContributorEntity(
+                login = "alice",
+                contributions = 120,
+                avatarUrl = "avatar.url"
+            )
+        )
+
+        every { userPreference.username } returns "kotlin"
+        coEvery { githubApi.getContributors("kotlin", "ktor") } returns contributorEntities
+        coEvery { githubApi.getUserRepoDetail("kotlin", "ktor") } returns repoDetailEntity
+
+        viewModel.refresh("ktor")
+
+        assertTrue { error.values.isEmpty() }
+        state.assertState(
+            RepoDetailViewState(),
+            { copy(loading = true) },
+            {
+                copy(
+                    loading = false,
+                    name = "ktor",
+                    descriptionText = "http library",
+                    starCount = 2000,
+                    sshUrl = "ssh.url",
+                    language = "kotlin",
+                    contributors = listOf(
+                        ContributorItem(
+                            name = "alice",
+                            contributions = 120,
+                            avatarUrl = "avatar.url"
+                        )
+                    )
+                )
+            }
+        )
     }
 }

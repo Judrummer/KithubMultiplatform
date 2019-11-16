@@ -12,7 +12,10 @@ class MainViewModelTest {
     val userPreference = mockk<UserPreference>(relaxed = true)
 
     val viewModel = MainViewModel(userPreference)
+
+    val state = viewModel.state.test()
     val rootNavigationEvent = viewModel.rootNavigationEvent.test()
+    val error = viewModel.error.test()
 
     @Test
     fun initializeNotLogin() {

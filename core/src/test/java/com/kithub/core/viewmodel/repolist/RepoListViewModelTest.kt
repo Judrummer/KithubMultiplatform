@@ -33,11 +33,50 @@ class RepoListViewModelTest {
 
     @Test
     fun refresh() {
-        //TODO: Implement RepoListViewModelTest.refresh
+        val userEntity = UserEntity(
+            login = "kotlin",
+            name = "Kotlin Lang",
+            avatarUrl = "www.google.com"
+        )
+
+        val repoEntities = listOf(
+            RepoEntity(
+                name = "ktor",
+                description = "Http library",
+                stargazersCount = 9999
+            )
+        )
+        every { userPreference.username } returns "kotlin"
+        coEvery { githubApi.getUser("kotlin") } returns userEntity
+        coEvery { githubApi.getUserRepos("kotlin") } returns repoEntities
+
+        viewModel.refresh()
+
+        assertTrue { error.values.isEmpty() }
+        state.assertState(RepoListViewState(),
+            { copy(loading = true) },
+            {
+                copy(
+                    loading = false,
+                    username = "kotlin",
+                    avatarUrl = "www.google.com",
+                    displayName = "Kotlin Lang",
+                    repos = listOf(
+                        RepoItem(
+                            name = "ktor",
+                            descriptionText = "Http library",
+                            starCount = 9999
+                        )
+                    )
+                )
+            }
+        )
     }
 
     @Test
     fun logout() {
-        //TODO: Implement RepoListViewModelTest.logout
+        viewModel.logout()
+
+        verify { userPreference.username = "" }
     }
 }

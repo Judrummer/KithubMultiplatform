@@ -1,15 +1,15 @@
 package com.kithub.core.data
 
+import platform.Foundation.NSUserDefaults
+import platform.Foundation.setValue
 
 actual class UserPreferenceImpl : UserPreference {
 
-    //TODO: Create NSUserDefaults
+    private val userDefaults get() = NSUserDefaults(suiteName = "UserPreference")
+
     override var username: String
-        get() {
-            //TODO: get key username from NSUserDefaults
-            return ""
-        }
+        get() = userDefaults.stringForKey("username").orEmpty()
         set(value) {
-            //TODO: set key username to NSUserDefaults by value
+            userDefaults.setValue(value, forKey =  "username")
         }
 }
