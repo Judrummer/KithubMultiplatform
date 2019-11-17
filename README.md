@@ -1,3 +1,5 @@
+You can see complete implementation version at branch name ```complete```
+
 # KithubMultiplatform
 Github application by Kotlin Multiplatform (Android/ iOS) for Kotlin/Everywhere BKK Workshop
 https://www.eventpop.me/e/7422?fbclid=IwAR3T4AJhWVV5P9NmkXCDVQBtNF_mRPJH8PSLXhrVlKf-NGiHJeWgPpys22Q
